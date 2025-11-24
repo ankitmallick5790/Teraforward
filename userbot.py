@@ -10,7 +10,7 @@ from aiohttp import web
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Environment variables - set these in Render dashboard
+# Environment variables - set these on Render
 API_ID = int(os.getenv('API_ID', '0'))
 API_HASH = os.getenv('API_HASH', '')
 SESSION_STRING = os.getenv('SESSION_STRING', '')
@@ -19,7 +19,7 @@ if not (API_ID and API_HASH and SESSION_STRING):
     logger.error("API_ID, API_HASH, or SESSION_STRING environment variables missing.")
     exit(1)
 
-# Regex to match various Terabox link formats
+# Regex to match Terabox URL variants
 TERABOX_PATTERN = r'(https?://[^\s]*(?:teraboxshare\.com|1024tera\.com)[^\s]*)'
 LINK_CONVERT_BOT = 'LinkConvertTerabot'
 
@@ -45,7 +45,6 @@ async def wait_for_bot_response(client, bot_username, timeout=60):
 async def handle_private_dm(event):
     logger.info(f"Incoming message from user_id={event.sender_id}: {event.raw_text}")
 
-    # Ignore messages from self
     if event.sender_id == (await client.get_me()).id:
         logger.info("Message from self ignored.")
         return
@@ -59,7 +58,6 @@ async def handle_private_dm(event):
     for link in matches:
         if not isinstance(link, str):
             link = ''.join(link)
-
         logger.info(f"Sending link to converter bot: {link}")
         try:
             await client.send_message(LINK_CONVERT_BOT, link)
@@ -71,7 +69,6 @@ async def handle_private_dm(event):
             await client.send_message(user_id, "Timed out waiting for link conversion.")
         await asyncio.sleep(1)
 
-# Simple health check endpoint
 async def handle(request):
     return web.Response(text="OK!")
 
@@ -87,7 +84,6 @@ async def main():
     await site.start()
     logger.info("Web server started.")
 
-    # Keep the service running
     while True:
         await asyncio.sleep(3600)
 
