@@ -9,7 +9,7 @@ API_ID = int(os.getenv('API_ID', ''))
 API_HASH = os.getenv('API_HASH', '')
 SESSION_STRING = os.getenv('SESSION_STRING', '')
 
-TERABOX_PATTERN = r'(https?://(?:www\.)?terabox\.com/[A-Za-z0-9/?=_\-]+)'
+TERABOX_PATTERN = r'(https?://[^\s]*terabox[^\s]*)'
 LINK_CONVERT_BOT = 'LinkConvertTerabot'
 
 client = TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH)
